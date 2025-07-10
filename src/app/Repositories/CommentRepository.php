@@ -21,4 +21,9 @@ class CommentRepository
     {
         return Comment::where('id', $id)->delete();
     }
+
+    public function deleteCommentByPost($postId)
+    {
+        return Comment::where('post_id', $postId)->delete();
+    }
 }

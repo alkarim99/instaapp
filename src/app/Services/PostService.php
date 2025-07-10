@@ -7,18 +7,26 @@ use App\Http\Requests\Post\PostUpdateRequest;
 use App\Http\Resources\Post\PostCollectionResource;
 use App\Http\Resources\Post\PostResource;
 use App\Models\Post;
+use App\Repositories\CommentRepository;
+use App\Repositories\LikeRepository;
 use App\Repositories\PostRepository;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class PostService
 {
-    protected $postRepository, $cloudinaryService;
+    protected $postRepository, $cloudinaryService, $commentRepository, $likeRepository;
 
-    public function __construct(PostRepository $postRepository, CloudinaryUploadService $cloudinaryService)
-    {
+    public function __construct(
+        PostRepository $postRepository,
+        CloudinaryUploadService $cloudinaryService,
+        CommentRepository $commentRepository,
+        LikeRepository $likeRepository
+    ) {
         $this->postRepository = $postRepository;
         $this->cloudinaryService = $cloudinaryService;
+        $this->commentRepository = $commentRepository;
+        $this->likeRepository = $likeRepository;
     }
 
     public function getRequest($request)
@@ -110,8 +118,6 @@ class PostService
 
     public function updatePost(PostUpdateRequest $postUpdateRequest, Post $post)
     {
-        Log::info($postUpdateRequest);
-        Log::info($post);
         try {
             $request = $postUpdateRequest;
 
@@ -138,7 +144,22 @@ class PostService
 
     public function deletePost(Post $post)
     {
-        return $this->postRepository->deletePost($post->id);
+        try {
+            DB::beginTransaction();
+
+            $this->commentRepository->deleteCommentByPost($post->id);
+
+            $this->likeRepository->deleteLikeByPost($post->id);
+
+            $this->postRepository->deletePost($post->id);
+
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+
+            Log::error($th);
+            throw new \Exception($th->getMessage(), 500);
+        }
     }
 
     public function incrementTotalCommentPost($post_id, $totalComment)
@@ -149,5 +170,15 @@ class PostService
     public function decrementTotalCommentPost($post_id, $totalComment)
     {
         return $this->postRepository->decrementTotalCommentPost($post_id, $totalComment);
+    }
+
+    public function incrementTotalLikePost($post_id, $totalLike)
+    {
+        return $this->postRepository->incrementTotalLikePost($post_id, $totalLike);
+    }
+
+    public function decrementTotalLikePost($post_id, $totalLike)
+    {
+        return $this->postRepository->decrementTotalLikePost($post_id, $totalLike);
     }
 }

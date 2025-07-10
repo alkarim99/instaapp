@@ -2,36 +2,36 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Comment\CommentCreateRequest;
-use App\Models\Comment;
-use App\Services\CommentService;
+use App\Http\Requests\Like\LikeCreateRequest;
+use App\Models\Like;
+use App\Services\LikeService;
 use Illuminate\Http\Request;
 
-class CommentController extends Controller
+class LikeController extends Controller
 {
-    protected $commentService;
+    protected $likeService;
 
-    public function __construct(CommentService $commentService)
+    public function __construct(LikeService $likeService)
     {
-        $this->commentService = $commentService;
+        $this->likeService = $likeService;
     }
 
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
         //
     }
 
     public function indexByPost(Request $request)
     {
-        $comments = $this->commentService->getCommentsByPost($request);
+        $likes = $this->likeService->getLikesByPost($request);
 
         return response()->json([
             'status' => 201,
             'message' => 'Success get data!',
-            'data' => $comments
+            'data' => $likes
         ]);
     }
 
@@ -46,21 +46,21 @@ class CommentController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(CommentCreateRequest $commentCreateRequest)
+    public function store(LikeCreateRequest $likeCreateRequest)
     {
-        $comment = $this->commentService->storeComment($commentCreateRequest);
+        $like = $this->likeService->storeLike($likeCreateRequest);
 
         return response()->json([
             'status' => 201,
-            'message' => 'Comment created successfully',
-            'data' => $comment
+            'message' => 'Like created successfully',
+            'data' => $like
         ]);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Comment $comment)
+    public function show(Like $like)
     {
         //
     }
@@ -68,7 +68,7 @@ class CommentController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Comment $comment)
+    public function edit(Like $like)
     {
         //
     }
@@ -76,7 +76,7 @@ class CommentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Comment $comment)
+    public function update(Request $request, Like $like)
     {
         //
     }
@@ -84,13 +84,13 @@ class CommentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Comment $comment)
+    public function destroy(Like $like)
     {
-        $this->commentService->deleteComment($comment);
+        $this->likeService->deleteLike($like);
 
         return response()->json([
             'status' => 200,
-            'message' => 'Comment deleted successfully'
+            'message' => 'Like deleted successfully'
         ]);
     }
 }

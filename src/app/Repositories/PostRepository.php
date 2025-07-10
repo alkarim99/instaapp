@@ -62,4 +62,14 @@ class PostRepository
     {
         return Post::where('id', $id)->decrement('total_comment', $totalComment);
     }
+
+    public function incrementTotalLikePost($id, $totalLike)
+    {
+        return Post::where('id', $id)->increment('total_like', $totalLike);
+    }
+
+    public function decrementTotalLikePost($id, $totalLike)
+    {
+        return Post::where('id', $id)->decrement('total_like', $totalLike);
+    }
 }

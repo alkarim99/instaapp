@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Http\Requests\Comment\CommentCreateRequest;
 use App\Http\Resources\Comment\CommentCollectionResource;
+use App\Models\Comment;
 use App\Models\Post;
 use App\Repositories\CommentRepository;
 use Illuminate\Support\Facades\DB;
@@ -49,14 +50,30 @@ class CommentService
         }
     }
 
-    public function deleteComment($id)
+    public function deleteComment(Comment $comment)
     {
         try {
             DB::beginTransaction();
 
-            $this->postService->decrementTotalCommentPost($id, 1);
+            $this->postService->decrementTotalCommentPost($comment->post_id, 1);
 
-            $this->commentRepository->deleteComment($id);
+            $this->commentRepository->deleteComment($comment->id);
+
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+
+            Log::error($th);
+            throw new \Exception($th->getMessage(), 500);
+        }
+    }
+
+    public function deleteCommentByPost(Post $post)
+    {
+        try {
+            DB::beginTransaction();
+
+            $this->commentRepository->deleteCommentByPost($post->id);
 
             DB::commit();
         } catch (\Throwable $th) {
