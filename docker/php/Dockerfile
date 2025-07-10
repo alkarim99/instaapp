@@ -14,7 +14,9 @@ RUN apk add --no-cache \
     unzip \
     oniguruma-dev \
     libxml2-dev \
-    libzip-dev
+    libzip-dev \
+    nodejs \
+    npm
 
 # Instal ekstensi PHP yang umum digunakan oleh Laravel
 RUN docker-php-ext-install \

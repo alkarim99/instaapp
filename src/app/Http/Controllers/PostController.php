@@ -33,6 +33,15 @@ class PostController extends Controller
         ]);
     }
 
+    public function indexWeb(Request $request)
+    {
+        $posts = Post::with('user')->latest()->paginate(10);
+
+        return view('posts.index', [
+            'posts' => $posts
+        ]);
+    }
+
     /**
      * Show the form for creating a new resource.
      */

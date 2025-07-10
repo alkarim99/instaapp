@@ -19,6 +19,8 @@ services:
     container_name: instaapp_php
     volumes:
       - ./src:/var/www/html
+    ports:
+      - "5173:5173"
 
   db:
     image: mysql:8.0
