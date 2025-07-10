@@ -16,7 +16,8 @@
                 @foreach ($posts as $post)
                     <div class="bg-white rounded-lg shadow-md p-4">
                         <header class="flex items-center">
-                            <img src="{{ $post->user->photo_profile ? url($post->user->photo_profile) : 'https://placehold.co/50' }}" class="rounded-full h-10 w-10 mr-2" alt="avatar">
+                            <img src="{{ $post->user->photo_profile ? url($post->user->photo_profile) : 'https://placehold.co/50' }}"
+                                class="rounded-full h-10 w-10 mr-2" alt="avatar">
                             <span class="font-bold">{{ $post->user->name ?? 'Pengguna' }}</span>
                         </header>
 
@@ -28,14 +29,20 @@
 
                         <div class="mt-2">
                             <div class="flex items-center mb-2">
-                                <button class="text-gray-600 hover:text-gray-900 focus:outline-none focus:text-gray-900 p-0">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                <button
+                                    class="text-gray-600 hover:text-gray-900 focus:outline-none focus:text-gray-900 p-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                                     </svg>
                                 </button>
-                                <button class="text-gray-600 hover:text-gray-900 focus:outline-none focus:text-gray-900 p-0 ml-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0-4.418-4.03-8-9-8a9.342 9.342 0 01-2.569.728l-3.982 2.008A9.31 9.31 0 0112 12c0 5.907 4.319 11 9 11 2.29 0 4.923-.576 7.245-1.551l-2.008 3.983z" />
+                                <button
+                                    class="text-gray-600 hover:text-gray-900 focus:outline-none focus:text-gray-900 p-0 ml-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                                     </svg>
                                 </button>
                             </div>
@@ -49,7 +56,8 @@
                                 {{ $post->caption }}
                             </p>
 
-                            <a href="#" class="text-gray-600 hover:text-gray-900 focus:outline-none focus:text-gray-900 text-sm mt-2">
+                            <a href="#"
+                                class="text-gray-600 hover:text-gray-900 focus:outline-none focus:text-gray-900 text-sm mt-2">
                                 Lihat semua komentar
                             </a>
                         </div>
