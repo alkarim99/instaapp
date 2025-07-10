@@ -5,17 +5,17 @@ namespace App\Services;
 use App\Http\Requests\Post\PostCreateRequest;
 use App\Http\Resources\Post\PostCollectionResource;
 use App\Repositories\PostRepository;
-use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class PostService
 {
-    protected $postRepository, $postResource;
+    protected $postRepository, $cloudinaryService;
 
-    public function __construct(PostRepository $postRepository)
+    public function __construct(PostRepository $postRepository, CloudinaryUploadService $cloudinaryService)
     {
         $this->postRepository = $postRepository;
+        $this->cloudinaryService = $cloudinaryService;
     }
 
     public function getRequest($request)
@@ -58,10 +58,9 @@ class PostService
     public function storePost(PostCreateRequest $postCreateRequest)
     {
         try {
-            $request = $postCreateRequest->validated();
-            Log::info('request = ' . json_encode($request));
             $file = $postCreateRequest->file('media');
-            Log::info('file = ' . json_encode($file));
+
+            $validatedData = $postCreateRequest->safe()->except('media');
 
             $fileMimeType = $file->getMimeType();
             $fileType = 'image';
@@ -70,20 +69,16 @@ class PostService
             }
 
             if ($fileType === 'image') {
-                $uploadedFile = Cloudinary::upload($file->getRealPath(), [
-                    'folder' => 'instaapp/posts'
-                ]);
+                $uploadedFile = $this->cloudinaryService->uploadImage($file, 'instaapp/posts');
             } else {
-                $uploadedFile = Cloudinary::uploadVideo($file->getRealPath(), [
-                    'folder' => 'instaapp/posts'
-                ]);
+                $uploadedFile = $this->cloudinaryService->uploadVideo($file, 'instaapp/posts');
             }
             
-            $fileUrl = $uploadedFile->getSecurePath();
+            $fileUrl = $uploadedFile['url'];
 
             $postData = [
                 'user_id' => 1,
-                'caption' => $request['caption'],
+                'caption' => $validatedData['caption'],
                 'link' => $fileUrl,
                 'type' => $fileType
             ];

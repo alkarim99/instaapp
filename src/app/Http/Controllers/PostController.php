@@ -6,6 +6,7 @@ use App\Http\Requests\Post\PostCreateRequest;
 use App\Models\Post;
 use App\Services\PostService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class PostController extends Controller
 {
