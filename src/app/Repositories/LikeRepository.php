@@ -12,6 +12,11 @@ class LikeRepository
         return $like;
     }
 
+    public function getDetailLike($likeId)
+    {
+        return Like::where('id', $likeId)->first();
+    }
+
     public function storeLike($request)
     {
         return Like::create($request);

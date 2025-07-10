@@ -84,13 +84,8 @@ class CommentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Comment $comment)
+    public function destroy($commentId)
     {
-        $this->commentService->deleteComment($comment);
-
-        return response()->json([
-            'status' => 200,
-            'message' => 'Comment deleted successfully'
-        ]);
+        return $this->commentService->deleteComment($commentId);
     }
 }

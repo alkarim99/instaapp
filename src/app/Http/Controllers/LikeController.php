@@ -84,13 +84,8 @@ class LikeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Like $like)
+    public function destroy($likeId)
     {
-        $this->likeService->deleteLike($like);
-
-        return response()->json([
-            'status' => 200,
-            'message' => 'Like deleted successfully'
-        ]);
+        return $this->likeService->deleteLike($likeId);
     }
 }

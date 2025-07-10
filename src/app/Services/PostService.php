@@ -12,6 +12,7 @@ use App\Repositories\LikeRepository;
 use App\Repositories\PostRepository;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Laravel\Sanctum\HasApiTokens;
 
 class PostService
 {
@@ -95,7 +96,7 @@ class PostService
             $fileUrl = $uploadedFile['url'];
 
             $postData = [
-                'user_id' => 1,
+                'user_id' => $postCreateRequest->user()->id,
                 'caption' => $validatedData['caption'],
                 'link' => $fileUrl,
                 'type' => $fileType
@@ -142,9 +143,25 @@ class PostService
         }
     }
 
-    public function deletePost(Post $post)
+    public function deletePost($postId)
     {
         try {
+            $post = $this->postRepository->getDetailPost(['id' => $postId]);
+            if (!$post) {
+                return response()->json([
+                    'status' => 400,
+                    'message' => 'Data not found',
+                ], 400);
+            }
+
+            $user = auth()->user();
+            if ($post->user_id !== $user->id) {
+                return response()->json([
+                    'status' => 401,
+                    'message' => 'Unauthorized',
+                ], 401);
+            }
+
             DB::beginTransaction();
 
             $this->commentRepository->deleteCommentByPost($post->id);
@@ -154,6 +171,11 @@ class PostService
             $this->postRepository->deletePost($post->id);
 
             DB::commit();
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Post deleted successfully'
+            ]);
         } catch (\Throwable $th) {
             DB::rollBack();
 

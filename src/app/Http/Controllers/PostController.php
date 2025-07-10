@@ -93,13 +93,8 @@ class PostController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Post $post)
+    public function destroy($postId)
     {
-        $this->postService->deletePost($post);
-
-        return response()->json([
-            'status' => 200,
-            'message' => 'Post deleted successfully'
-        ]);
+        return $this->postService->deletePost($postId);
     }
 }

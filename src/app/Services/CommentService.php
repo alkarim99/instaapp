@@ -32,13 +32,13 @@ class CommentService
             DB::beginTransaction();
 
             $validatedData = $commentCreateRequest->validated();
-    
-            $validatedData['user_id'] = 1;
-    
+
+            $validatedData['user_id'] = $commentCreateRequest->user()->id;
+
             $comment = $this->commentRepository->storeComment($validatedData);
 
             $this->postService->incrementTotalCommentPost($validatedData['post_id'], 1);
-    
+
             DB::commit();
 
             return $comment;
@@ -50,9 +50,25 @@ class CommentService
         }
     }
 
-    public function deleteComment(Comment $comment)
+    public function deleteComment($commentId)
     {
         try {
+            $comment = $this->commentRepository->getDetailComment($commentId);
+            if (!$comment) {
+                return response()->json([
+                    'status' => 400,
+                    'message' => 'Data not found',
+                ], 400);
+            }
+
+            $user = auth()->user();
+            if ($comment->user_id !== $user->id) {
+                return response()->json([
+                    'status' => 401,
+                    'message' => 'Unauthorized',
+                ], 401);
+            }
+
             DB::beginTransaction();
 
             $this->postService->decrementTotalCommentPost($comment->post_id, 1);
@@ -60,6 +76,11 @@ class CommentService
             $this->commentRepository->deleteComment($comment->id);
 
             DB::commit();
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Comment deleted successfully'
+            ]);
         } catch (\Throwable $th) {
             DB::rollBack();
 

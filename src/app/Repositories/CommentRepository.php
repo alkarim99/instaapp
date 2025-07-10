@@ -12,6 +12,11 @@ class CommentRepository
         return $comment;
     }
 
+    public function getDetailComment($commentId)
+    {
+        return Comment::where('id', $commentId)->first();
+    }
+
     public function storeComment($request)
     {
         return Comment::create($request);

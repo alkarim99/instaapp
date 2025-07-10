@@ -31,7 +31,7 @@ class LikeService
         try {
             $validatedData = $likeCreateRequest->validated();
 
-            $validatedData['user_id'] = 1;
+            $validatedData['user_id'] = $likeCreateRequest->user()->id;
 
             DB::beginTransaction();
 
@@ -44,15 +44,31 @@ class LikeService
             return $like;
         } catch (\Throwable $th) {
             DB::rollBack();
-            
+
             Log::error($th);
             throw new \Exception($th->getMessage(), 500);
         }
     }
 
-    public function deleteLike(Like $like)
+    public function deleteLike($likeId)
     {
         try {
+            $like = $this->likeRepository->getDetailLike($likeId);
+            if (!$like) {
+                return response()->json([
+                    'status' => 400,
+                    'message' => 'Data not found',
+                ], 400);
+            }
+
+            $user = auth()->user();
+            if ($like->user_id !== $user->id) {
+                return response()->json([
+                    'status' => 401,
+                    'message' => 'Unauthorized',
+                ], 401);
+            }
+
             DB::beginTransaction();
 
             $this->postService->decrementTotalLikePost($like->post_id, 1);
@@ -60,6 +76,11 @@ class LikeService
             $this->likeRepository->deleteLike($like->id);
 
             DB::commit();
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Like deleted successfully'
+            ]);
         } catch (\Throwable $th) {
             DB::rollBack();
 
@@ -83,5 +104,4 @@ class LikeService
             throw new \Exception($th->getMessage(), 500);
         }
     }
-
 }
