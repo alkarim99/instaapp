@@ -52,4 +52,14 @@ class PostRepository
     {
         return Post::where('id', $id)->delete();
     }
+
+    public function incrementTotalCommentPost($id, $totalComment)
+    {
+        return Post::where('id', $id)->increment('total_comment', $totalComment);
+    }
+
+    public function decrementTotalCommentPost($id, $totalComment)
+    {
+        return Post::where('id', $id)->decrement('total_comment', $totalComment);
+    }
 }

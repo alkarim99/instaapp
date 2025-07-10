@@ -140,4 +140,14 @@ class PostService
     {
         return $this->postRepository->deletePost($post->id);
     }
+
+    public function incrementTotalCommentPost($post_id, $totalComment)
+    {
+        return $this->postRepository->incrementTotalCommentPost($post_id, $totalComment);
+    }
+
+    public function decrementTotalCommentPost($post_id, $totalComment)
+    {
+        return $this->postRepository->decrementTotalCommentPost($post_id, $totalComment);
+    }
 }
