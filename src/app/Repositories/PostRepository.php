@@ -14,7 +14,7 @@ class PostRepository
         $orderBy = $request['orderBy'];
         $perPage = $request['perPage'];
         $page = $request['page'];
-        $userId = $request['user_id'];
+        $userId = $request['userId'];
 
         if ($keyword) {
             $query->where('caption', 'like', "%{$keyword}%");
@@ -36,5 +36,20 @@ class PostRepository
     public function storePost($request)
     {
         return Post::create($request);
+    }
+
+    public function getDetailPost($request)
+    {
+        return Post::where('id', $request['id'])->first();
+    }
+
+    public function updatePost($request, $id)
+    {
+        return Post::where('id', $id)->update($request);
+    }
+
+    public function deletePost($id)
+    {
+        return Post::where('id', $id)->delete();
     }
 }

@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Post\PostCreateRequest;
+use App\Http\Requests\Post\PostUpdateRequest;
+use App\Http\Resources\Post\PostResource;
 use App\Models\Post;
 use App\Services\PostService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -49,7 +52,7 @@ class PostController extends Controller
 
         return response()->json([
             'status' => 201,
-            'message' => 'Product created successfully',
+            'message' => 'Post created successfully',
             'data' => $post
         ]);
     }
@@ -57,9 +60,14 @@ class PostController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Post $post)
+    public function show($id)
     {
-        //
+        $post = $this->postService->getDetailPost(['id' => $id]);
+        return response()->json([
+            'status' => 200,
+            'message' => 'Success get data!',
+            'data' => $post
+        ]);
     }
 
     /**
@@ -73,9 +81,15 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Post $post)
+    public function update(PostUpdateRequest $postUpdateRequest, Post $post)
     {
-        //
+        $postData = $this->postService->updatePost($postUpdateRequest, $post);
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Post updated successfully',
+            'data' => $postData
+        ]);
     }
 
     /**
@@ -83,6 +97,11 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        //
+        $this->postService->deletePost($post);
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Post deleted successfully'
+        ]);
     }
 }

@@ -96,29 +96,17 @@ class CloudinaryUploadService
     public function uploadVideo(UploadedFile $file, string $folder = 'videos', array $options = [])
     {
         try {
-            // Validasi file video
             if (!$this->isValidVideo($file)) {
                 throw new Exception('File harus berupa video yang valid');
             }
 
-            // Default options untuk video
             $defaultOptions = [
                 'folder' => $folder,
                 'resource_type' => 'video',
-                // 'format' => 'auto',
-                // 'quality' => 'auto:good',
-                // 'transformation' => [
-                //     'width' => 1280,
-                //     'height' => 720,
-                //     'crop' => 'limit',
-                //     'video_codec' => 'auto'
-                // ]
             ];
 
-            // Merge dengan options yang diberikan
             $uploadOptions = array_merge($defaultOptions, $options);
 
-            // Upload ke Cloudinary
             $result = $this->cloudinary->uploadApi()->upload(
                 $file->getPathname(),
                 $uploadOptions

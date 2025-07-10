@@ -3,7 +3,10 @@
 namespace App\Services;
 
 use App\Http\Requests\Post\PostCreateRequest;
+use App\Http\Requests\Post\PostUpdateRequest;
 use App\Http\Resources\Post\PostCollectionResource;
+use App\Http\Resources\Post\PostResource;
+use App\Models\Post;
 use App\Repositories\PostRepository;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -26,7 +29,7 @@ class PostService
             'keyword' => $request->input('keyword') ? strtolower($request->input('keyword')) : null,
             'sortBy' => $request->input('sort_by'),
             'orderBy' => $request->input('order_by'),
-            'user_id' => $request->input('user_id')
+            'userId' => $request->input('user_id')
         ];
     }
 
@@ -55,6 +58,13 @@ class PostService
         return ['data' => $data, 'meta' => $meta];
     }
 
+    public function getDetailPost($request)
+    {
+        $post = $this->postRepository->getDetailPost($request);
+
+        return $post == null ? null : new PostResource($post);
+    }
+
     public function storePost(PostCreateRequest $postCreateRequest)
     {
         try {
@@ -73,7 +83,7 @@ class PostService
             } else {
                 $uploadedFile = $this->cloudinaryService->uploadVideo($file, 'instaapp/posts');
             }
-            
+
             $fileUrl = $uploadedFile['url'];
 
             $postData = [
@@ -96,5 +106,38 @@ class PostService
             Log::error($th);
             throw new \Exception($th->getMessage(), 500);
         }
+    }
+
+    public function updatePost(PostUpdateRequest $postUpdateRequest, Post $post)
+    {
+        Log::info($postUpdateRequest);
+        Log::info($post);
+        try {
+            $request = $postUpdateRequest;
+
+            $request = [
+                'caption' => $request['caption']
+            ];
+
+            Log::info($request);
+
+            DB::beginTransaction();
+
+            $this->postRepository->updatePost($request, $post->id);
+
+            DB::commit();
+
+            return $post;
+        } catch (\Throwable $th) {
+            DB::rollBack();
+
+            Log::error($th);
+            throw new \Exception($th->getMessage(), 500);
+        }
+    }
+
+    public function deletePost(Post $post)
+    {
+        return $this->postRepository->deletePost($post->id);
     }
 }
