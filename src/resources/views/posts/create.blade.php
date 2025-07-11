@@ -31,15 +31,18 @@
                                             class="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
                                             <span>Upload a file</span>
                                             <input id="media" name="media" type="file" class="sr-only"
-                                                onchange="previewImage()" accept="image/*,video/*">
+                                                onchange="previewMedia()" accept="image/*,video/*">
                                         </label>
                                         <p class="pl-1">or drag and drop</p>
                                     </div>
                                     <p class="text-xs text-gray-500">PNG, JPG, MP4 up to 10MB</p>
                                 </div>
                             </div>
-                            {{-- Tampilkan pratinjau gambar --}}
-                            <img id="image-preview" class="mt-4" style="display:none; max-height: 200px;">
+                            <div class="flex justify-center mt-4">
+                                <img id="image-preview" style="display:none; max-height: 300px; width: auto;">
+                                <video id="video-preview" style="display:none; max-height: 300px; width: auto;"
+                                    controls></video>
+                            </div>
                             <x-input-error :messages="$errors->get('media')" class="mt-2" />
                         </div>
 
@@ -65,17 +68,33 @@
 </x-app-layout>
 
 <script>
-    function previewImage() {
-        const image = document.querySelector('#media');
+    function previewMedia() {
+        const mediaInput = document.querySelector('#media');
         const imgPreview = document.querySelector('#image-preview');
+        const videoPreview = document.querySelector('#video-preview');
 
-        imgPreview.style.display = 'block';
+        imgPreview.style.display = 'none';
+        videoPreview.style.display = 'none';
 
-        const oFReader = new FileReader();
-        oFReader.readAsDataURL(image.files[0]);
+        const file = mediaInput.files[0];
+        if (!file) {
+            return;
+        }
 
-        oFReader.onload = function(oFREvent) {
-            imgPreview.src = oFREvent.target.result;
+        if (file.type.startsWith('image/')) {
+            imgPreview.style.display = 'block';
+
+            const oFReader = new FileReader();
+            oFReader.readAsDataURL(file);
+
+            oFReader.onload = function(oFREvent) {
+                imgPreview.src = oFREvent.target.result;
+            }
+        } else if (file.type.startsWith('video/')) {
+            videoPreview.style.display = 'block';
+
+            videoPreview.src = URL.createObjectURL(file);
+            videoPreview.load(); // Muat video
         }
     }
 </script>

@@ -34,6 +34,9 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Ubah kepemilikan direktori ke user www-data
 RUN chown -R www-data:www-data /var/www/html
 
+# Salin konfigurasi kustom untuk upload
+COPY uploads.ini /usr/local/etc/php/conf.d/uploads.ini
+
 # Ganti user ke www-data
 USER www-data
 

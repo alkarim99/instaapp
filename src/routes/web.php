@@ -17,8 +17,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     
-    Route::get('/posts/{post}', [PostController::class, 'showWeb'])->name('posts.showWeb');
     Route::get('/posts/create', [PostController::class, 'create'])->name('posts.create');
+    Route::get('/posts/{post}', [PostController::class, 'showWeb'])->name('posts.showWeb');
     Route::post('/posts', [PostController::class, 'storeWeb'])->name('posts.storeWeb');
 
     Route::post('likes', [LikeController::class, 'storeWeb'])->name('likes.storeWeb');
