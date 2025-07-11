@@ -17,6 +17,11 @@ class LikeRepository
         return Like::where('id', $likeId)->first();
     }
 
+    public function getLikeByPostAndUser($postId, $userId)
+    {
+        return Like::where('post_id', $postId)->where('user_id', $userId)->first();
+    }
+
     public function storeLike($request)
     {
         return Like::create($request);

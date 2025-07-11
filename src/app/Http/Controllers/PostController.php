@@ -47,7 +47,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        return view('posts.create');
     }
 
     /**
@@ -64,6 +64,13 @@ class PostController extends Controller
         ]);
     }
 
+    public function storeWeb(PostCreateRequest $postCreateRequest)
+    {
+        $this->postService->storePost($postCreateRequest);
+
+        return redirect()->route('posts.indexWeb')->with('success', 'Post successfully created!');
+    }
+
     /**
      * Display the specified resource.
      */
@@ -74,6 +81,14 @@ class PostController extends Controller
             'status' => 200,
             'message' => 'Success get data!',
             'data' => $post
+        ]);
+    }
+
+    public function showWeb($id)
+    {
+        $post = $this->postService->getDetailPost(['id' => $id]);
+        return view('posts.show', [
+            'post' => $post
         ]);
     }
 

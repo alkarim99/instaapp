@@ -26,7 +26,7 @@ class PostResource extends JsonResource
             'total_like' => $this->total_like,
             'total_comment' => $this->total_comment,
             'link' => $this->link,
-            'type' => $this->type
+            'type' => $this->types,
         ];
     }
 }

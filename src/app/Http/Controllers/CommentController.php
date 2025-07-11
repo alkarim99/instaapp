@@ -57,6 +57,13 @@ class CommentController extends Controller
         ]);
     }
 
+    public function storeWeb(CommentCreateRequest $commentCreateRequest)
+    {
+        $this->commentService->storeComment($commentCreateRequest);
+
+        return redirect()->route('posts.indexWeb')->with('success', 'Comment successfully created!');
+    }
+
     /**
      * Display the specified resource.
      */

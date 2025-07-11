@@ -33,6 +33,14 @@ class CommentService
 
             $validatedData = $commentCreateRequest->validated();
 
+            $post = $this->postService->getDetailPost(['id' => $validatedData['post_id']]);
+            if (!$post) {
+                return response()->json([
+                    'status' => 400,
+                    'message' => 'Data not found',
+                ], 400);
+            }
+
             $validatedData['user_id'] = $commentCreateRequest->user()->id;
 
             $comment = $this->commentRepository->storeComment($validatedData);

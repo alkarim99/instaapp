@@ -57,6 +57,13 @@ class LikeController extends Controller
         ]);
     }
 
+    public function storeWeb(LikeCreateRequest $likeCreateRequest)
+    {
+        $this->likeService->storeLike($likeCreateRequest);
+
+        return redirect()->route('posts.indexWeb')->with('success', 'Like successfully created!');
+    }
+
     /**
      * Display the specified resource.
      */

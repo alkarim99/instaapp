@@ -30,16 +30,36 @@ class LikeService
     {
         try {
             $validatedData = $likeCreateRequest->validated();
+            $user = $likeCreateRequest->user();
 
-            $validatedData['user_id'] = $likeCreateRequest->user()->id;
+            $validatedData['user_id'] = $user->id;
 
-            DB::beginTransaction();
+            $post = $this->postService->getDetailPost(['id' => $validatedData['post_id']]);
+            if (!$post) {
+                return response()->json([
+                    'status' => 400,
+                    'message' => 'Data not found',
+                ], 400);
+            }
 
-            $like = $this->likeRepository->storeLike($validatedData);
-
-            $this->postService->incrementTotalLikePost($validatedData['post_id'], 1);
-
-            DB::commit();
+            $like = $this->likeRepository->getLikeByPostAndUser($validatedData['post_id'], $user->id);
+            if ($like) {
+                DB::beginTransaction();
+    
+                $this->likeRepository->deleteLike($like->id);
+    
+                $this->postService->decrementTotalLikePost($validatedData['post_id'], 1);
+    
+                DB::commit();
+            } else {
+                DB::beginTransaction();
+    
+                $like = $this->likeRepository->storeLike($validatedData);
+    
+                $this->postService->incrementTotalLikePost($validatedData['post_id'], 1);
+    
+                DB::commit();
+            }
 
             return $like;
         } catch (\Throwable $th) {

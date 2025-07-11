@@ -18,7 +18,7 @@ class Post extends Model
         'link',
         'type'
     ];
-    
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -32,5 +32,13 @@ class Post extends Model
     public function likes()
     {
         return $this->hasMany(Like::class);
+    }
+
+    public function isLikedByAuthUser(): bool
+    {
+        if (auth()->check()) {
+            return $this->likes()->where('user_id', auth()->user()->id)->exists();
+        }
+        return false;
     }
 }
